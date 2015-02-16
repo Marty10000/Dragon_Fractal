@@ -1,0 +1,163 @@
+<head>
+<script>
+
+var instructionsArray = [];
+
+var temporaryArray = [];
+
+var zoomLevel = 1
+
+var iteration = 0
+
+function transcribe(){
+
+	for (var i = 0; i < instructionsArray.length; i++) {
+		if (instructionsArray[i] == "L"){
+			temporaryArray[i] = "R";
+		}
+		else
+		{
+			temporaryArray[i] = "L";
+		}
+	}
+}
+
+function appendR(){
+	instructionsArray.push("R");
+}
+
+function reverseTemp(){
+	temporaryArray.reverse();
+}
+
+function joinArrays(){
+	instructionsArray = instructionsArray.concat(temporaryArray);
+}
+
+function resetAndDraw(){
+	ctx.beginPath();
+	ctx.clearRect(0,0,800,800);
+	
+	var xpos = 400
+	var ypos = 400
+	var direction = 90
+	var distance = (100 / zoomLevel)
+	
+	ctx.moveTo(xpos,ypos);
+	xpos = xpos + distance;
+	ctx.lineTo(xpos,ypos);
+	ctx.stroke();
+	
+	ctx.moveTo(xpos,ypos);
+	
+	for (var i = 0; i < instructionsArray.length; i++) {
+		if (instructionsArray[i] == "L"){
+			direction = (direction - 90) % 360;
+		}
+		else
+		{
+			direction = (direction + 90) % 360;
+		}
+		
+		if(direction < 0){
+			direction = direction + 360
+		}
+		else
+		{
+		
+		}
+		
+		if (direction == 0){
+			ypos = ypos - distance;
+		}
+		else
+		{
+			if (direction == 90){
+				xpos = xpos + distance;
+			}
+			else
+			{
+				if (direction == 180){
+					ypos = ypos + distance;
+				}
+				else {
+					xpos = xpos - distance;
+				}
+			}
+		}
+		
+		ctx.lineTo(xpos,ypos);
+		ctx.stroke();
+		
+	}
+	
+	iteration = iteration + 1;
+	zoomLevel = Math.pow(1.35, iteration);
+	document.getElementById("iteration").innerHTML = " " + iteration + " Iterations";
+	
+}
+
+function iterate() {
+
+	//	transcribe inst onto temp and invert
+
+	transcribe()
+	
+	// reverse temp and prepend an "R"
+	
+	appendR()
+	
+	// reverse temp
+	
+	reverseTemp()
+	
+	// append temp to inst
+	
+	joinArrays()
+	
+	// reset canvas
+
+	resetAndDraw()
+	
+}
+
+function showInst() {
+	document.getElementById("demo").innerHTML = instructionsArray;
+}
+
+function showTemp() {
+	document.getElementById("demo").innerHTML = temporaryArray;
+}
+
+function resetDraw() {
+	ctx.beginPath();
+	ctx.clearRect(0,0,800,800);
+	instructionsArray = [];
+	temporaryArray = [];
+	zoomLevel = 1
+	iteration = 0
+	document.getElementById("demo").innerHTML = "";
+	document.getElementById("iteration").innerHTML = "";
+}
+
+
+</script>
+</head>
+
+<body>
+
+<button type="button" onclick="iterate()">Iterate</button>
+<button type="button" onclick="resetDraw()">Reset</button>
+<button type="button" onclick="showInst()">Show Algorithm</button><span id="iteration"></span><br /><span id="demo"></span>
+
+<canvas id="myCanvas" width="800" height="800"
+style="border:1px solid #000000;">
+</canvas>
+
+<script>
+	var c = document.getElementById("myCanvas");
+	var ctx = c.getContext("2d");
+</script>
+
+</body>
+</html>
