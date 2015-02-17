@@ -87,10 +87,10 @@ function resetAndDraw(){
 		}
 		
 		ctx.lineTo(xpos,ypos);
-		ctx.stroke();
 		
 	}
 	
+	ctx.stroke();
 	iteration = iteration + 1;
 	zoomLevel = Math.pow(1.35, iteration);
 	document.getElementById("iteration").innerHTML = " " + iteration + " Iterations";
